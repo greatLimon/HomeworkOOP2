@@ -5,7 +5,6 @@ class Mentor:
         self.surname = surname
         self.courses_attached = []
         
-
  
 class Lecturer(Mentor):
     def __init__(self, name:str, surname:str)->None:
@@ -51,8 +50,6 @@ class Lecturer(Mentor):
             return summary/count
         return 0
 
-    
-
 class Student:
     def __init__(self, name:str, surname:str, gender:str)->None:
         self.name = name
@@ -63,7 +60,11 @@ class Student:
         self.grades = {}
     
     def __str__(self)->str:
-        return f'Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за домашние задания: {self.__avrg_grade() :.1f}\nКурсы в процессе изучения: {', '.join(self.courses_in_progress)}\nЗавершенные курсы: {', '.join(self.finished_courses)}'
+        return (f'Имя: {self.name}'
+                f'\nФамилия: {self.surname}'
+                f'\nСредняя оценка за домашние задания: {self.__avrg_grade() :.1f}'
+                f'\nКурсы в процессе изучения: {', '.join(self.courses_in_progress)}'
+                f'\nЗавершенные курсы: {', '.join(self.finished_courses)}')
     
     # ==
     def __eq__(self, other)->bool:
@@ -127,8 +128,15 @@ class Reviewer(Mentor):
         return f'Эксперт {self.name} {self.surname} поставил оценку {grade} студенту {student.name} {student.surname} на курсе {course}.'
 
     
-
-
+def average_grade(course:str, *objects)->int:
+    result = 0
+    count = 0
+    for obj in objects:
+        if isinstance(obj, Student) or isinstance(obj, Lecturer):
+            if course in obj.grades:
+                result += sum(obj.grades[course]) / len(obj.grades[course])
+                count += 1
+    return (0 if count == 0 else result/count)
 
 
 lect1 = Lecturer('Ivan', "Popov")
@@ -142,17 +150,21 @@ std1.courses_in_progress.append('OOP')
 std1.finished_courses.append('Git')
 std1.rate_lecturer(lect1, 'OOP', 5)
 
-rev1 = Reviewer('Anton', 'Cosolapov')
-rev1.courses_attached.append('OOP')
-rev1.rate_hw(std1, 'OOP', 9)
-
 std2 = Student('Elena', 'ABC', 'Female')
 std2.courses_in_progress.append('OOP')
 std2.courses_in_progress.append('Git')
 std2.rate_lecturer(lect1, 'OOP', 9)
 std2.rate_lecturer(lect2,'Git',10)
 
+rev1 = Reviewer('Anton', 'Cosolapov')
+rev1.courses_attached.append('OOP')
+rev1.rate_hw(std1, 'OOP', 9)
 rev1.rate_hw(std2, 'OOP', 9)
+
+rev2 = Reviewer('Gerana', 'Mefodievna')
+rev2.courses_attached.append('Git')
+rev2.rate_hw(std1, 'Git', 10)
+rev2.rate_hw(std2, 'Git', 10)
 
 print(std1)
 print('\n')
@@ -178,3 +190,6 @@ print(lect1 < lect2)
 print(lect1 >= lect2)
 print(lect1 <= lect2)
 print(lect1 != lect2)
+
+
+print(average_grade('OOP', std1,std2,lect1,lect2))
